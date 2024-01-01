@@ -1,18 +1,20 @@
 <template>
-  <TesteInput v-model="teste" />
-  <pre>{{ teste }}</pre>
-  <div>
-    <label>
-      <div>titulo</div>
-      <input v-model="teste.titulo" />
-    </label>
-  </div>
-  <div>
-    <label>
-      <div>valor</div>
-      <input v-model="teste.valor" />
-    </label>
-  </div>
+  <ClientOnly>
+    <TesteInput v-model="teste" />
+    <pre>{{ teste }}</pre>
+    <div>
+      <label>
+        <div>titulo</div>
+        <input v-model="teste.titulo" />
+      </label>
+    </div>
+    <div>
+      <label>
+        <div>valor</div>
+        <input v-model="teste.valor" />
+      </label>
+    </div>
+  </ClientOnly>
 </template>
 
 <script setup lang="ts">
