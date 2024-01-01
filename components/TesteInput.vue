@@ -3,7 +3,7 @@
     <label>
       <div>{{ teste?.titulo }}</div>
       <input
-        :placeholder="placeholder"
+        :placeholder
         v-model="teste.valor"
       />
     </label>
