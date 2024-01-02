@@ -31,12 +31,21 @@ export default defineEventHandler(async (event: H3Event) => {
 
     contexto = "aoexcluir";
     setResponseStatus(event, 500);
+    let excluir: string;
+    let parametro: object;
+
     if (idPOST) {
-      await conexao.execute(excluirPessoaPorId, { id: idPOST });
+      excluir = excluirPessoaPorId;
+      parametro = { id: idPOST };
     } else {
-      await conexao.execute(excluirPessoaPorNome, {
-        nome: nomePOST?.toUpperCase().trim(),
-      });
+      excluir = excluirPessoaPorNome;
+      parametro = { nome: nomePOST?.toUpperCase().trim() };
+    }
+
+    const retorno = await conexao.execute(excluir, parametro);
+    if (!retorno.rowsAffected) {
+      setResponseStatus(event, 404);
+      return;
     }
 
     setResponseStatus(event, 204);
