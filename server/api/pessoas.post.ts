@@ -27,7 +27,7 @@ export default defineEventHandler(async (event: H3Event) => {
 
   try {
     ok(pessoaNome, "pessoa:nome:obrigatorio");
-    const nome = pessoaNome?.toUpperCase();
+    const nome = pessoaNome.toUpperCase().trim();
 
     const { size: nomeJaExiste } = await conexao.execute(
       verificarSeNomeJaExiste,
