@@ -24,6 +24,7 @@ export default defineEventHandler(async (event: H3Event) => {
       },
     };
   }
+
   const conexao: Connection = event.context.obterConexao();
   const pessoaPorId = await conexao.execute<Pessoa>(obterPessoaPorId, {
     id: Number(event.context.params.id),
