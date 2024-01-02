@@ -63,7 +63,7 @@ export default defineEventHandler(async (event: H3Event) => {
       };
     }
   } finally {
-    await conexao.execute("DELETE FROM pessoas WHERE nome ilike 'ALBERTO' ");
-    await conexao.execute("DELETE FROM pessoas WHERE nome ilike 'JEUDI' ");
+    await conexao.execute("DELETE FROM pessoas WHERE nome = 'ALBERTO' ");
+    await conexao.execute("DELETE FROM pessoas WHERE nome = 'JEUDI' ");
   }
 });
