@@ -50,7 +50,6 @@ export default defineEventHandler(async (event: H3Event) => {
     setResponseStatus(event, 200);
     return {
       novaPessoa: { id: Number(novaPessoa.insertId), nome },
-      validacao: { nomeJaExiste },
       tempo: novaPessoa.time,
     };
   } catch (err) {
