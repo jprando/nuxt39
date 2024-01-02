@@ -2,14 +2,16 @@ import { Connection } from "@planetscale/database";
 import type { H3Event } from "h3";
 
 type Pessoa = {
-  id: number,
-  nome: string,
-}
+  id: number;
+  nome: string;
+  criadoEm: Date;
+  alteradoEm: Date;
+};
 
 const obterPessoas = `
 SELECT id, nome, criadoEm, alteradoEm
 FROM pessoas
-ORDER BY LOWER(nome) ASC
+ORDER BY nome ASC
 `;
 
 export default defineEventHandler(async (event: H3Event) => {
@@ -19,7 +21,6 @@ export default defineEventHandler(async (event: H3Event) => {
   return {
     quantidade: pessoas.size,
     pessoas: pessoas.rows,
-    campos: pessoas.headers,
     tempo: pessoas.time,
   };
 });

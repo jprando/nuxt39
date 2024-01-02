@@ -41,9 +41,14 @@ export default defineEventHandler(async (event: H3Event) => {
     strictEqual(novaPessoa.rowsAffected, 1, `${namespace}:erro:${contexto}`);
 
     return {
-      id: Number(novaPessoa.insertId),
-      nome,
-      time: novaPessoa.time,
+      novaPessoa: {
+        id: Number(novaPessoa.insertId),
+        nome,
+      },
+      validacao: {
+        nomeJaExiste,
+      },
+      tempo: novaPessoa.time,
     };
   } catch (err) {
     if (err instanceof Error) {
