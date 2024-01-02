@@ -33,7 +33,7 @@ export default defineEventHandler(async (event: H3Event) => {
       verificarSeNomeJaExiste,
       { nome },
     );
-    ok(!nomeJaExiste, "pessoa:nome:duplicado");
+    strictEqual(nomeJaExiste, 0, "pessoa:nome:duplicado");
 
     contexto = "aosalvar";
     status = 500;
@@ -44,9 +44,6 @@ export default defineEventHandler(async (event: H3Event) => {
       novaPessoa: {
         id: Number(novaPessoa.insertId),
         nome,
-      },
-      validacao: {
-        nomeJaExiste,
       },
       tempo: novaPessoa.time,
     };
