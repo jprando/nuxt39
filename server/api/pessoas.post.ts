@@ -1,6 +1,5 @@
 import { Connection } from "@planetscale/database";
 import type { H3Event } from "h3";
-import { ok, strictEqual } from "node:assert";
 
 type PessoaPOST = {
   nome?: string;
@@ -12,6 +11,7 @@ const verificarSeNomeJaExiste = `
 SELECT id
 FROM pessoas
 WHERE nome = :nome
+LIMIT 1
 `;
 
 const inserirPessoa = `
@@ -20,26 +20,33 @@ VALUES(:nome)
 `;
 
 export default defineEventHandler(async (event: H3Event) => {
-  const { nome: pessoaNome } = await readBody<PessoaPOST>(event);
+  const { nome: nomePOST } = await readBody<PessoaPOST>(event);
   const conexao: Connection = event.context.obterConexao();
   let contexto = "validacao";
-  let status = 400;
+  setResponseStatus(event, 400);
 
   try {
-    ok(pessoaNome, "pessoa:nome:obrigatorio");
-    const nome = pessoaNome.toUpperCase().trim();
+    if (!nomePOST) {
+      throw new Error("pessoa:nome:obrigatorio");
+    }
+    const nome = nomePOST.toUpperCase().trim();
 
     const { size: nomeJaExiste } = await conexao.execute(
       verificarSeNomeJaExiste,
       { nome },
     );
-    strictEqual(Number(nomeJaExiste), 0, "pessoa:nome:duplicado");
+    if (nomeJaExiste) {
+      throw new Error("pessoa:nome:duplicado");
+    }
 
     contexto = "aosalvar";
-    status = 500;
+    setResponseStatus(event, 500);
     const novaPessoa = await conexao.execute(inserirPessoa, { nome });
-    strictEqual(novaPessoa.rowsAffected, 1, `${namespace}:erro:${contexto}`);
+    if (novaPessoa.rowsAffected !== 1) {
+      throw new Error(`${namespace}:erro:${contexto}`);
+    }
 
+    setResponseStatus(event, 200);
     return {
       novaPessoa: { id: Number(novaPessoa.insertId), nome },
       validacao: { nomeJaExiste },
@@ -47,7 +54,6 @@ export default defineEventHandler(async (event: H3Event) => {
     };
   } catch (err) {
     if (err instanceof Error) {
-      setResponseStatus(event, status);
       return {
         erro: {
           contexto: `${namespace}:${contexto}`,
