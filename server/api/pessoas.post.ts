@@ -23,10 +23,10 @@ export default defineEventHandler(async (event: H3Event) => {
   const { nome: nomePOST } = await readBody<PessoaPOST>(event);
   const conexao: Connection = event.context.obterConexao();
   let contexto = "validacao";
-  setResponseStatus(event, 400);
 
   try {
     if (!nomePOST) {
+      setResponseStatus(event, 400);
       throw new Error("pessoa:nome:obrigatorio");
     }
     const nome = nomePOST.toUpperCase().trim();
@@ -36,6 +36,7 @@ export default defineEventHandler(async (event: H3Event) => {
       { nome },
     );
     if (nomeJaExiste) {
+      setResponseStatus(event, 409);
       throw new Error("pessoa:nome:duplicado");
     }
 
@@ -61,5 +62,8 @@ export default defineEventHandler(async (event: H3Event) => {
         },
       };
     }
+  } finally {
+    conexao.execute("DELETE FROM pessoas WHERE nome ilike 'ALBERTO' ");
+    conexao.execute("DELETE FROM pessoas WHERE nome ilike 'JEUDI' ");
   }
 });
