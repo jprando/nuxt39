@@ -7,9 +7,9 @@ type Pessoa = {
 }
 
 const obterPessoas = `
-SELECT id, nome
+SELECT id, nome, criadoEm, alteradoEm
 FROM pessoas
-ORDER BY nome ASC
+ORDER BY LOWER(nome) ASC
 `;
 
 export default defineEventHandler(async (event: H3Event) => {
