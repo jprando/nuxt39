@@ -8,5 +8,6 @@
   "bracketSameLine": false,
   "printWidth": 80,
   "singleQuote": false,
-  "vueIndentScriptAndStyle": true
+  "vueIndentScriptAndStyle": true,
+  "bracketSpacing": true
 }

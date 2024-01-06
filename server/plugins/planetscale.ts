@@ -1,4 +1,5 @@
-import { connect, type Connection } from "@planetscale/database";
+import type { Connection } from "@planetscale/database";
+import { connect } from "@planetscale/database";
 import type { H3Event } from "h3";
 import { ok } from "node:assert";
 
@@ -21,6 +22,17 @@ export default defineNitroPlugin((nitro) => {
 
       event.context.conexao = connect({ host, username, password });
       return event.context.conexao;
+    };
+
+    event.context.executarConsulta = <T>(
+      consulta: string,
+      args?: object | any[] | null,
+      opcoes?: object,
+    ) => {
+      if (!consulta) {
+        throw new Error("executarConsulta: consulta nao foi informada!");
+      }
+      return event.context.obterConexao().execute<T>(consulta, args, opcoes);
     };
   });
 });

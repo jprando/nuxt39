@@ -1,12 +1,5 @@
-import { Connection } from "@planetscale/database";
 import type { H3Event } from "h3";
-
-type Pessoa = {
-  id: number;
-  nome: string;
-  criadoEm: Date;
-  alteradoEm: Date;
-};
+import type { Pessoa } from "./tipos";
 
 const obterPessoaPorId = `
 SELECT id, nome, criadoEm, alteradoEm
@@ -15,30 +8,39 @@ WHERE id = :id
 `;
 
 export default defineEventHandler(async (event: H3Event) => {
-  if (!event.context.params?.id) {
-    setResponseStatus(event, 400);
-    return {
-      erro: {
-        contexto: "pessoa:validacao:parametro",
-        mensagem: "pessoa:id:obrigatorio",
-      },
-    };
-  }
+  const { pessoaId } = await getValidatedRouterParams(event, ({ id }: any) => {
+    const pessoaId = Number(id);
 
-  const conexao: Connection = event.context.obterConexao();
-  const pessoaPorId = await conexao.execute<Pessoa>(obterPessoaPorId, {
-    id: Number(event.context.params.id),
+    if (!pessoaId || pessoaId < 0) {
+      throw createError({
+        message: `id informado não é válido`,
+        status: 400,
+        statusMessage: "pessoa:validacao:parametro:id",
+        // name: "pessoa:validacao:parametro:id",
+      });
+    }
+
+    return { pessoaId };
   });
 
-  if (!pessoaPorId.size) {
-    setResponseStatus(event, 404);
-    return;
+  const {
+    context: { executarConsulta },
+  } = event;
+
+  const obterPessoa = executarConsulta<Pessoa>(obterPessoaPorId, {
+    id: pessoaId,
+  });
+  const { rows: pessoas } = await obterPessoa;
+
+  if (!pessoas.length) {
+    throw createError({
+      message: `pessoa não encontrada`,
+      status: 400,
+      statusMessage: "pessoa:pesquisar:porid:naoencontrado",
+      // name: "pessoa:pesquisar:porid:naoencontrado",
+    });
   }
 
-  setResponseStatus(event, 200);
-  const [pessoa] = pessoaPorId.rows;
-  return {
-    pessoa,
-    tempo: pessoaPorId.time,
-  };
+  const [pessoa] = pessoas;
+  return { pessoa };
 });

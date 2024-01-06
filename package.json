@@ -4,18 +4,20 @@
   "type": "module",
   "scripts": {
     "build": "nuxt build",
-    "dev": "nuxt dev",
+    "predev": "npm install --no-fund --no-audit --prefer-dedupe",
+    "dev": "netlify dev",
+    "dev:local": "nuxt dev",
     "generate": "nuxt generate",
-    "preview": "nuxt preview",
+    "prepreview": "npm run build",
+    "preview": "netlify dev -c 'node .output/server/index.mjs'",
     "postinstall": "nuxt prepare",
     "db": "pscale shell teste main"
   },
   "devDependencies": {
+    "netlify-cli": "^17.11.1",
     "nuxt": "^3.9.0",
     "vue": "^3.4.0",
-    "vue-router": "^4.2.5"
-  },
-  "dependencies": {
+    "vue-router": "^4.2.5",
     "@planetscale/database": "^1.13.0"
   }
 }

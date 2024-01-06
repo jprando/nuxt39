@@ -1,3 +1,5 @@
+import type { Connection } from "@planetscale/database";
+
 declare module "nuxt/schema" {
   interface RuntimeConfig {
     PLANETSCALE_SERVIDOR: string;
@@ -7,6 +9,14 @@ declare module "nuxt/schema" {
   // interface PublicRuntimeConfig {
   //   apiBase: string
   // }
+}
+
+declare module "h3" {
+  interface H3EventContext {
+    conexao: Connection;
+    obterConexao: () => Connection;
+    executarConsulta: Connection["execute"];
+  }
 }
 
 export {};
