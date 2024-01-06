@@ -16,6 +16,10 @@
   const teste = defineModel<TesteInputModel>({
     required: true,
     type: Object,
+    default: {
+      titulo: '',
+      valor: '',
+    },
   });
 
   const placeholder = computed(() => `informe o ${teste.value?.titulo} aqui`);
