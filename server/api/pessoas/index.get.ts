@@ -1,5 +1,5 @@
 import type { H3Event } from "h3";
-import type { Pessoa } from "../../tipo/pessoa";
+import type { Pessoa } from "../../types/pessoa";
 
 const obterPessoas = `
 SELECT id, nome, criadoEm, alteradoEm
