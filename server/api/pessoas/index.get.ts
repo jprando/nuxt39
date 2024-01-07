@@ -1,23 +1,7 @@
 import type { H3Event } from "h3";
-import type { Pessoa } from "../../types/pessoa";
-
-const obterPessoas = `
-SELECT id, nome, criadoEm, alteradoEm
-FROM pessoas
-ORDER BY nome ASC
-`;
+import { obterPessoas } from "~/server/utils/pessoa";
 
 export default defineEventHandler(async (event: H3Event) => {
-  const {
-    context: { executarConsulta },
-  } = event;
-
-  const {
-    size: quantidade,
-    rows: pessoas,
-    time: tempo,
-  } = await executarConsulta<Pessoa>(obterPessoas);
-
-  setResponseStatus(event, 200);
-  return { quantidade, pessoas, tempo };
+  const pessoas = await obterPessoas(event);
+  return { pessoas };
 });
