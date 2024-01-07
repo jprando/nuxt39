@@ -5,6 +5,6 @@ import { pessoaPorId } from "~/server/sql";
 export async function obterPessoaPorId(event: H3Event, id: number) {
   const obterPessoa = executarConsulta<Pessoa>(event, pessoaPorId, { id });
   const { rows } = await obterPessoa;
-  const [pessoa] = rows;
-  return pessoa;
+  const [primeiraPessoaEncontrada] = rows;
+  return primeiraPessoaEncontrada;
 }
