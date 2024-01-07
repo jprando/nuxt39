@@ -14,10 +14,11 @@
     "db": "pscale shell teste main"
   },
   "devDependencies": {
+    "@planetscale/database": "^1.13.0",
     "netlify-cli": "^17.11.1",
     "nuxt": "^3.9.0",
     "vue": "^3.4.0",
     "vue-router": "^4.2.5",
-    "@planetscale/database": "^1.13.0"
+    "zod": "^3.22.4"
   }
 }

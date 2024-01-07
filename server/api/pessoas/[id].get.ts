@@ -1,5 +1,6 @@
 import type { H3Event } from "h3";
 import type { Pessoa } from "./tipos";
+import { z } from "zod";
 
 const obterPessoaPorId = `
 SELECT id, nome, criadoEm, alteradoEm
@@ -7,37 +8,45 @@ FROM pessoas
 WHERE id = :id
 `;
 
+const inputSchema = z.object({
+  id: z.coerce
+    .number({
+      required_error: "Id é obrigatório",
+      invalid_type_error: "Id deve ser um número",
+    })
+    .int("Id deve ser um número inteiro")
+    .positive("Id deve ser um número positivo")
+    .safe("Id deve ser um número válido"),
+});
+
 export default defineEventHandler(async (event: H3Event) => {
-  const { pessoaId } = await getValidatedRouterParams(event, ({ id }: any) => {
-    const pessoaId = Number(id);
+  console.log("#23", event.context.params);
+  const parametroEntrada = await getValidatedRouterParams(
+    event,
+    inputSchema.safeParse,
+  );
 
-    if (!pessoaId || pessoaId < 0) {
-      throw createError({
-        message: `id informado não é válido`,
-        status: 400,
-        statusMessage: "pessoa:validacao:parametro:id",
-        // name: "pessoa:validacao:parametro:id",
-      });
-    }
-
-    return { pessoaId };
+  if (!parametroEntrada.success) {
+    const { error } = parametroEntrada;
+    const [primeiroErro] = error.issues;
+    throw createError({
+      statusCode: 400,
+      statusMessage: "parametro:invalido",
+      message: primeiroErro.message,
+      name: error.name,
+      data: error.issues,
+    });
+  }
+  const { executarConsulta } = event.context;
+  const { rows: pessoas } = await executarConsulta<Pessoa>(obterPessoaPorId, {
+    id: parametroEntrada.data.id,
   });
-
-  const {
-    context: { executarConsulta },
-  } = event;
-
-  const obterPessoa = executarConsulta<Pessoa>(obterPessoaPorId, {
-    id: pessoaId,
-  });
-  const { rows: pessoas } = await obterPessoa;
 
   if (!pessoas.length) {
     throw createError({
+      statusCode: 404,
+      statusMessage: "pessoa:naoencontrada",
       message: `pessoa não encontrada`,
-      status: 400,
-      statusMessage: "pessoa:pesquisar:porid:naoencontrado",
-      // name: "pessoa:pesquisar:porid:naoencontrado",
     });
   }
 
