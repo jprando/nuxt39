@@ -1,29 +1,26 @@
 import type { H3Event } from "h3";
-import { obterPessoaPorId } from "~/server/sql/pessoa";
-import { validarParametroPessoaPorId } from "~/server/validacao/pessoa";
-import { erroPessoa } from "./erros";
-import type { Pessoa } from "./tipos";
+import { validarParametroPessoaPorId } from "~/server/validacao";
+import { obterErroParametroInvalido, pessoaNaoEncontrada } from "~/server/erro";
 
-
-export default defineEventHandler(async (event: H3Event) => {
-  const { executarConsulta } = event.context;
-
+async function obterParametro(event: H3Event) {
   const parametro = await getValidatedRouterParams(
     event,
     validarParametroPessoaPorId.safeParse,
   );
+
   if (!parametro.success) {
-    throw createError(erroPessoa.parametroInvalido(parametro));
+    const parametroInvalido = obterErroParametroInvalido(parametro);
+    throw createError(parametroInvalido);
   }
 
-  const { id } = parametro.data;
-  const obterPessoa = executarConsulta<Pessoa>(obterPessoaPorId, { id });
-  const { rows: pessoas } = await obterPessoa;
+  return parametro.data;
+}
 
-  if (!pessoas.length) {
-    throw createError(erroPessoa.naoEncontrada);
+export default defineEventHandler(async (event: H3Event) => {
+  const { id } = await obterParametro(event);
+  const pessoa = await obterPessoaPorId(event, id);
+  if (!pessoa) {
+    throw createError(pessoaNaoEncontrada);
   }
-
-  const [pessoa] = pessoas;
   return { pessoa };
 });

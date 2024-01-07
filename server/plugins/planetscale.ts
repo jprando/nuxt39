@@ -21,16 +21,5 @@ export default defineNitroPlugin((nitro) => {
       }
       return event.context.conexao;
     };
-
-    event.context.executarConsulta = <T>(
-      consulta: string,
-      args?: object | any[] | null,
-      opcoes?: object,
-    ) => {
-      if (!consulta) {
-        throw new Error("executarConsulta: consulta nao foi informada!");
-      }
-      return event.context.obterConexao().execute<T>(consulta, args, opcoes);
-    };
   });
 });
