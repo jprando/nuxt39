@@ -14,7 +14,7 @@ ORDER BY nome ASC
 export const consultarPessoaPorNome = `
 SELECT id
 FROM pessoas
-WHERE nome = :nome
+WHERE UPPER(nome) = UPPER(:nome)
 LIMIT 1
 `;
 
