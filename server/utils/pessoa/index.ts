@@ -1,16 +1,16 @@
 import type { H3Event } from "h3";
-import type { Pessoa } from "~/server/types";
 import {
-  selectPessoas,
-  selectPessoaPorId,
-  selectPessoaPorNome,
   inserirPessoa,
+  consultarPessoaPorId,
+  consultarPessoaPorNome,
+  consultarPessoas,
 } from "~/server/sql";
+import type { Pessoa } from "~/server/types";
 
 export async function obterPessoaPorId(event: H3Event, id: number) {
   const { rows: pessoas } = await executarConsulta<Pessoa>(
     event,
-    selectPessoaPorId,
+    consultarPessoaPorId,
     { id },
   );
   const [primeiraPessoaEncontrada] = pessoas;
@@ -20,7 +20,7 @@ export async function obterPessoaPorId(event: H3Event, id: number) {
 export async function obterPessoas(event: H3Event) {
   const { rows: pessoas } = await executarConsulta<Pessoa>(
     event,
-    selectPessoas,
+    consultarPessoas,
   );
   return pessoas;
 }
@@ -31,7 +31,7 @@ export async function validarPessoaComNomeDuplicado(
 ) {
   const { size: nomeJaExiste } = await executarConsulta(
     event,
-    selectPessoaPorNome,
+    consultarPessoaPorNome,
     { nome },
   );
   if (nomeJaExiste) {
