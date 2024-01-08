@@ -2,19 +2,19 @@ import type { H3Event } from "h3";
 import { ZodObject, ZodRawShape } from "zod";
 import { obterErroParametroInvalido } from "../error";
 
-export async function obterParametro<T extends ZodRawShape>(
+export async function obterDadosRecebidos<T extends ZodRawShape>(
   event: H3Event,
   validarParametro: ZodObject<T>,
 ) {
-  const parametro = await getValidatedRouterParams(
+  const body = await readValidatedBody(
     event,
     validarParametro.safeParse,
   );
 
-  if (!parametro.success) {
-    const parametroInvalido = obterErroParametroInvalido(parametro);
+  if (!body.success) {
+    const parametroInvalido = obterErroParametroInvalido(body);
     throw createError(parametroInvalido);
   }
 
-  return parametro.data;
+  return body.data;
 }
