@@ -5,8 +5,19 @@ import { pessoaNaoEncontrada } from "~/server/error";
 export default defineEventHandler(async (event: H3Event) => {
   const { id } = await obterParametro(event, validarParametroPessoaPorId);
   const pessoa = await obterPessoaPorId(event, id);
+
   if (!pessoa) {
     throw createError(pessoaNaoEncontrada);
   }
-  return { pessoa };
+
+  const { nome, criadoEm, alteradoEm } = pessoa;
+
+  return {
+    pessoa: {
+      id,
+      nome,
+      criadoEm,
+      alteradoEm,
+    },
+  };
 });
