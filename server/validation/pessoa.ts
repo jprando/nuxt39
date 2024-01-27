@@ -50,7 +50,7 @@ export const validarViewModelPessoaPorId = z
       })
       .max(new Date(), { message: "Data da última alteração não deve estar no futuro" }),
   })
-  .refine(({ criadoEm, alteradoEm }) => criadoEm < alteradoEm, {
+  .refine(({ criadoEm, alteradoEm }) => criadoEm <= alteradoEm, {
     message:
       "A data da última alteração não dever ser menor que a data de criação",
     path: ["alteradoEm"],
