@@ -4,3 +4,7 @@ export type Pessoa = {
   criadoEm: Date;
   alteradoEm: Date;
 };
+
+export type NovaPessoa = {
+  nome: string;
+};

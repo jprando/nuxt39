@@ -16,18 +16,18 @@
 </template>
 
 <script setup lang="ts">
-  useHead({
-    htmlAttrs: {
-      lang: "pt-BR",
-    },
-  });
-  useSeoMeta({
-    title: "Nuxt39 JPrando",
-    description: "testando o nuxt v3.9",
-  });
+useHead({
+  htmlAttrs: {
+    lang: "pt-BR",
+  },
+});
+useSeoMeta({
+  title: "Nuxt39 JPrando",
+  description: "testando o nuxt v3.9",
+});
 
-  const teste = ref({
-    titulo: "nome",
-    valor: "JEUDI PRANDO",
-  });
+const teste = ref({
+  titulo: "nome",
+  valor: "JEUDI PRANDO",
+});
 </script>

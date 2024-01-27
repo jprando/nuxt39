@@ -1,0 +1,18 @@
+{
+    "recommendations": [
+        "biomejs.biome",
+        "aaron-bond.better-comments",
+        "mikestead.dotenv",
+        "usernamehw.errorlens",
+        "dbaeumer.vscode-eslint",
+        "mhutchie.git-graph",
+        "oderwat.indent-rainbow",
+        "visualstudioexptteam.vscodeintellicode",
+        "christian-kohler.path-intellisense",
+        "shardulm94.trailing-spaces",
+        "rangav.vscode-thunder-client",
+        "pkief.material-icon-theme",
+        "gruntfuggly.todo-tree",
+        "vue.volar"
+    ]
+}

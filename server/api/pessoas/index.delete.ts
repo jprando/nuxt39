@@ -1,5 +1,6 @@
 import { Connection } from "@planetscale/database";
 import type { H3Event } from "h3";
+import { excluirPessoaPorId, excluirPessoaPorNome } from "~/server/database";
 
 type PessoaPOST = {
   id?: number;
@@ -8,23 +9,14 @@ type PessoaPOST = {
 
 const namespace = "pessoa:excluir";
 
-const excluirPessoaPorNome = `
-DELETE FROM pessoas
-WHERE nome = :nome
-`;
-
-const excluirPessoaPorId = `
-DELETE FROM pessoas
-WHERE id = :id
-`;
-
 export default defineEventHandler(async (event: H3Event) => {
-  const { id: idPOST, nome: nomePOST } = await readBody<PessoaPOST>(event);
+  const { id, nome } = await readBody<PessoaPOST>(event);
   const conexao: Connection = event.context.obterConexao();
   let contexto = "validacao";
 
   try {
-    if (!idPOST && !nomePOST) {
+    // TODO refatorar
+    if (!id && !nome) {
       setResponseStatus(event, 400);
       throw new Error("pessoa:id:ou:nome:obrigatorio");
     }
@@ -34,12 +26,12 @@ export default defineEventHandler(async (event: H3Event) => {
     let excluir: string;
     let parametro: object;
 
-    if (idPOST) {
+    if (id) {
       excluir = excluirPessoaPorId;
-      parametro = { id: idPOST };
+      parametro = { id };
     } else {
       excluir = excluirPessoaPorNome;
-      parametro = { nome: nomePOST?.toUpperCase().trim() };
+      parametro = { nome: nome?.toUpperCase().trim() };
     }
 
     const retorno = await conexao.execute(excluir, parametro);
@@ -50,13 +42,14 @@ export default defineEventHandler(async (event: H3Event) => {
 
     setResponseStatus(event, 204);
   } catch (err) {
-    if (err instanceof Error) {
-      return {
-        erro: {
-          contexto: `${namespace}:${contexto}`,
-          mensagem: err.message,
-        },
-      };
-    }
+    const message =
+      err instanceof Error
+        ? err.message
+        : "não foi possível excluir a pessao informada";
+    createError({
+      statusCode: 500,
+      statusMessage: `${namespace}:${contexto}`,
+      message: message,
+    });
   }
 });

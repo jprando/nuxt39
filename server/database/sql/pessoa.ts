@@ -22,3 +22,13 @@ export const inserirPessoa = `
 INSERT INTO pessoas (nome)
 VALUES(:nome)
 `;
+
+export const excluirPessoaPorNome = `
+DELETE FROM pessoas
+WHERE nome = :nome
+`;
+
+export const excluirPessoaPorId = `
+DELETE FROM pessoas
+WHERE id = :id
+`;

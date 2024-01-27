@@ -4,7 +4,7 @@ import type { H3Event } from "h3";
 export async function executarConsulta<T>(
   event: H3Event,
   consulta: string,
-  parametros?: object | any[] | null,
+  parametros?: object,
   opcoes?: object,
 ): Promise<ExecutedQuery<T>> {
   if (!consulta) {

@@ -3,24 +3,24 @@ import { z } from "zod";
 export const validarParametroPessoaPorId = z.object({
   id: z.coerce
     .number({
-      description: "Id da Pessoa",
-      required_error: "Id é obrigatório",
-      invalid_type_error: "Id deve ser um número",
+      description: "Id da pessoa",
+      required_error: "Id da pessoa é obrigatório",
+      invalid_type_error: "Id da pessoa deve ser um número",
     })
-    .int("Id deve ser um número inteiro")
-    .positive("Id deve ser um número positivo")
-    .safe("Id deve ser um número válido"),
+    .int("Id da pessoa deve ser um número inteiro")
+    .positive("Id da pessoa deve ser um número positivo")
+    .safe("Id da pessoa deve ser um número válido"),
 });
 
 export const validarDadosNovaPessoa = z.object(
   {
     nome: z
       .string({
-        description: "Nome da Pessoa",
-        required_error: "Nome da Pessoa é obrigatório",
-        invalid_type_error: "Nome da Pessoa deve ser um texto",
+        description: "Nome da pessoa",
+        required_error: "Nome da pessoa é obrigatório",
+        invalid_type_error: "Nome da pessoa deve ser um texto",
       })
-      .min(3, "Nome da Pessoa tem que ter no mínimo 3 letras")
+      .min(3, "Nome da pessoa tem que ter no mínimo 3 letras")
       .toUpperCase()
       .trim(),
   },
@@ -30,3 +30,28 @@ export const validarDadosNovaPessoa = z.object(
     required_error: "Informe os dados da Nova Pessoa",
   },
 );
+
+export const validarViewModelPessoaPorId = z
+  .object({
+    id: validarParametroPessoaPorId.shape.id,
+    nome: validarDadosNovaPessoa.shape.nome,
+    criadoEm: z.coerce
+      .date({
+        description: "Data da criação da Pessoa",
+        required_error: "Data da criação é obrigatório",
+        invalid_type_error: "Data da criação deve ser uma data",
+      })
+      .max(new Date(), { message: "Data da criação não deve estar no futuro" }),
+    alteradoEm: z.coerce
+      .date({
+        description: "Data da última alteração da Pessoa",
+        required_error: "Data da última alteração é obrigatório",
+        invalid_type_error: "Data da última alteração deve ser uma data",
+      })
+      .max(new Date(), { message: "Data da última alteração não deve estar no futuro" }),
+  })
+  .refine(({ criadoEm, alteradoEm }) => criadoEm < alteradoEm, {
+    message:
+      "A data da última alteração não dever ser menor que a data de criação",
+    path: ["alteradoEm"],
+  });
