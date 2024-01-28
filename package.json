@@ -4,19 +4,17 @@
   "type": "module",
   "scripts": {
     "build": "nuxt build",
-    "predev": "npm install --no-fund --no-audit --prefer-dedupe",
-    "dev": "netlify dev",
-    "dev:local": "nuxt dev",
+    "predev": "sha512sum --strict --check package.sha512 > temp0 2> /dev/null && awk -F: '{print $1}' temp0 | LC_COLLATE=C sort > temp1 && ls -1 package.json package-lock.json node_modules/**/package.json | LC_COLLATE=C sort > temp2 && diff -aq temp1 temp2 > /dev/null && rm --force temp0 temp1 temp2 || npm install --no-fund --no-audit --prefer-dedupe && sha512sum --text package.json package-lock.json node_modules/**/package.json > package.sha512 && rm --force temp0 temp1 temp2",
+    "dev": "nuxt dev",
     "generate": "nuxt generate",
     "prepreview": "npm run build",
-    "preview": "netlify dev -c 'node .output/server/index.mjs'",
+    "preview": "node .output/server/index.mjs",
     "postinstall": "nuxt prepare",
     "db": "pscale shell teste main"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.5.3",
     "@planetscale/database": "^1.13.0",
-    "netlify-cli": "^17.11.1",
     "nuxt": "^3.9.0",
     "vue": "^3.4.0",
     "vue-router": "^4.2.5",
