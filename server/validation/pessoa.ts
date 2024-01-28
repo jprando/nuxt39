@@ -35,6 +35,7 @@ export const validarViewModelPessoaPorId = z
   .object({
     id: validarParametroPessoaPorId.shape.id,
     nome: validarDadosNovaPessoa.shape.nome,
+    //
     criadoEm: z.coerce
       .date({
         description: "Data da criação da Pessoa",
@@ -42,6 +43,7 @@ export const validarViewModelPessoaPorId = z
         invalid_type_error: "Data da criação deve ser uma data",
       })
       .max(new Date(), { message: "Data da criação não deve estar no futuro" }),
+    //
     alteradoEm: z.coerce
       .date({
         description: "Data da última alteração da Pessoa",
@@ -51,9 +53,13 @@ export const validarViewModelPessoaPorId = z
       .max(new Date(), {
         message: "Data da última alteração não deve estar no futuro",
       }),
+  }, {
+    description: "Pessoa",
+    invalid_type_error: "Pessoa deve ser um objeto",
+    required_error: "Pessoa sem informação"
   })
   .refine(({ criadoEm, alteradoEm }) => criadoEm <= alteradoEm, {
     message:
-      "A data da última alteração não dever ser menor que a data de criação",
+      "A data da Última Alteração não dever ser menor que a data da Criação",
     path: ["alteradoEm"],
   });
