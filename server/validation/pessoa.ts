@@ -48,7 +48,9 @@ export const validarViewModelPessoaPorId = z
         required_error: "Data da última alteração é obrigatório",
         invalid_type_error: "Data da última alteração deve ser uma data",
       })
-      .max(new Date(), { message: "Data da última alteração não deve estar no futuro" }),
+      .max(new Date(), {
+        message: "Data da última alteração não deve estar no futuro",
+      }),
   })
   .refine(({ criadoEm, alteradoEm }) => criadoEm <= alteradoEm, {
     message:
