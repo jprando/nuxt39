@@ -13,8 +13,7 @@ export default defineEventHandler(async (event) => {
   await validarPessoaNomeJaExiste(event, nome);
   try {
     const novaPessoa = await cadastrarPessoa(event, { nome });
-    const pessoa = obterViewModelPessoa(novaPessoa);
-    return { pessoa };
+    return { pessoa: obterViewModelPessoa(novaPessoa) };
   } catch (erro) {
     throw criarErroApi(
       "api:pessoas:post",
