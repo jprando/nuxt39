@@ -1,14 +1,26 @@
-import type { H3Event } from "h3";
 import { obterPessoas } from "~/server/database/pessoa";
+import { pessoaComInformacaoInvalida } from "~/server/error";
+import { validarViewModelPessoaSimples } from "~/server/validation";
 
-export default defineEventHandler(async (event: H3Event) => {
-  const pessoas = await obterPessoas(event);
-  return {
-    pessoas: pessoas.map(({ id, nome, criadoEm, alteradoEm }) => ({
-      id,
-      nome,
-      criadoEm,
-      alteradoEm,
-    })),
-  };
+const obterViewModelPessoa = (pessoa: unknown) =>
+  obterViewModel(
+    pessoa,
+    validarViewModelPessoaSimples,
+    pessoaComInformacaoInvalida,
+  );
+
+export default defineEventHandler(async (event) => {
+  try {
+    const pessoas = await obterPessoas(event);
+    const viewModelPessoas = pessoas.map(obterViewModelPessoa);
+    return {
+      pessoas: viewModelPessoas,
+    };
+  } catch (erro) {
+    throw criarErroApi(
+      "api:pessoas:get",
+      "Erro ao tentar obter listagem de Pessoas",
+      erro,
+    );
+  }
 });

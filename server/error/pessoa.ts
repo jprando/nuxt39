@@ -1,27 +1,28 @@
-import { SafeParseError, SafeParseReturnType } from "zod";
+import { SafeParseError } from "zod";
+import type { CreateErrorInput } from "~/server/utils/obterCreateErrorInput";
 
 export const pessoaNaoEncontrada = {
   statusCode: 404,
-  statusMessage: "pessoa:naoencontrada",
-  message: "pessoa não encontrada",
-} satisfies (typeof createError.prototype)["input"];
+  statusMessage: "erro:pessoa:naoencontrada",
+  message: "Pessoa não encontrada",
+} satisfies CreateErrorInput;
 
-export const naoFoiPossivelCriarNovaPessoa = {
-  statusCode: 500,
-  statusMessage: "pessoa:cadastro:erro",
-  message: "Não foi possível criar uma nova pessoa",
-} satisfies (typeof createError.prototype)["input"];
-
-export const nomePessoaJaExiste = {
+export const pessoaNomeJaExiste = {
   statusCode: 409,
-  statusMessage: "pessoa:nome:duplicado",
-  message: "Já existe uma pessoa com o nome informado",
-} satisfies (typeof createError.prototype)["input"];
+  statusMessage: "erro:pessoa:nome:duplicado",
+  message: "Já existe uma Pessoa com o nome informado",
+} satisfies CreateErrorInput;
 
-export const pessoaComInformacaoInvalida = <T>(viewModel: SafeParseError<T>) =>
+export const pessoaAoCadastrar = {
+  statusCode: 500,
+  statusMessage: "erro:pessoa:aocadastrar",
+  message: "Não foi possível cadastrar a Pessoa",
+} satisfies CreateErrorInput;
+
+export const pessoaComInformacaoInvalida = <T>({ error }: SafeParseError<T>) =>
   ({
     statusCode: 500,
-    statusMessage: "erro:api:pessoas:porid:get",
-    message: "erro ao obter as informações da pessoa",
-    data: viewModel.error.errors,
-  }) satisfies (typeof createError.prototype)["input"];
+    statusMessage: "erro:pessoa:invalida",
+    message: "Erro ao obter as informações da Pessoa",
+    data: error.errors,
+  }) satisfies CreateErrorInput;

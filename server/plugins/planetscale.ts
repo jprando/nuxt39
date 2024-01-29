@@ -1,10 +1,10 @@
+import { ok } from "node:assert";
 import type { Connection } from "@planetscale/database";
 import { connect } from "@planetscale/database";
-import type { H3Event } from "h3";
-import { ok } from "node:assert";
+import type { EventHandlerRequest, H3Event } from "h3";
 
 export default defineNitroPlugin((nitro) => {
-  nitro.hooks.hook("request", (event: H3Event) => {
+  nitro.hooks.hook("request", (event: H3Event<EventHandlerRequest>) => {
     event.context.obterConexao = (): Connection => {
       if (!event.context.conexao) {
         const {

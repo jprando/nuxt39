@@ -1,4 +1,3 @@
-import type { H3Event } from "h3";
 import { obterPessoaPorId } from "~/server/database";
 import {
   pessoaComInformacaoInvalida,
@@ -6,10 +5,10 @@ import {
 } from "~/server/error";
 import {
   validarParametroPessoaPorId,
-  validarViewModelPessoaPorId,
+  validarViewModelPessoaSimples,
 } from "~/server/validation";
 
-export default defineEventHandler(async (event: H3Event) => {
+export default defineEventHandler(async (event) => {
   const { id } = await obterParametro(event, validarParametroPessoaPorId);
   const pessoa = await obterPessoaPorId(event, id);
 
@@ -17,13 +16,11 @@ export default defineEventHandler(async (event: H3Event) => {
     throw createError(pessoaNaoEncontrada);
   }
 
-  const viewModel = await obterViewModel(
-    pessoa,
-    validarViewModelPessoaPorId,
-    pessoaComInformacaoInvalida,
-  );
-
   return {
-    pessoa: viewModel,
+    pessoa: await obterViewModel(
+      pessoa,
+      validarViewModelPessoaSimples,
+      pessoaComInformacaoInvalida,
+    ),
   };
 });

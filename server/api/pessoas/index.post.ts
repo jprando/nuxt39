@@ -1,24 +1,25 @@
-import type { H3Event } from "h3";
-import { validarDadosNovaPessoa } from "~/server/validation";
+import { cadastrarPessoa, validarPessoaNomeJaExiste } from "~/server/database";
+import { pessoaAoCadastrar } from "~/server/error";
+import {
+  validarDadosNovaPessoa,
+  validarViewModelPessoaSimples,
+} from "~/server/validation";
 
-export default defineEventHandler(async (event: H3Event) => {
+const obterViewModelPessoa = (pessoa: unknown) =>
+  obterViewModel(pessoa, validarViewModelPessoaSimples, pessoaAoCadastrar);
+
+export default defineEventHandler(async (event) => {
   const { nome } = await obterDadosRecebidos(event, validarDadosNovaPessoa);
-
+  await validarPessoaNomeJaExiste(event, nome);
   try {
-    await validarPessoaComNomeDuplicado(event, nome);
-    const id = await cadastrarNovaPessoa(event, { nome });
-    setResponseStatus(event, 201);
-    return {
-      pessoa: {
-        id,
-        nome,
-      },
-    };
-  } catch (e) {
-    const erro = e instanceof Error ? e : undefined;
-    throw createError({
-      statusMessage: "pessoa:erro:aocadastrar",
-      message: erro?.message || "Erro ao tentar cadastrar Pessoa",
-    });
+    const novaPessoa = await cadastrarPessoa(event, { nome });
+    const pessoa = obterViewModelPessoa(novaPessoa);
+    return { pessoa };
+  } catch (erro) {
+    throw criarErroApi(
+      "api:pessoas:post",
+      "Erro ao tentar cadastrar Pessoa",
+      erro,
+    );
   }
 });
