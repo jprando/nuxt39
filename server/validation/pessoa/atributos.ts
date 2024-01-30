@@ -22,9 +22,9 @@ export const nome = z
 //
 export const criadoEm = z
   .string({
-    description: "Data da última alteração da Pessoa",
-    required_error: "Data da última alteração é obrigatório",
-    invalid_type_error: "Data da última alteração deve ser uma data",
+    description: "Data da criação da Pessoa",
+    required_error: "Data da criação é obrigatório",
+    invalid_type_error: "Data da criação deve ser uma data",
   })
   .transform((valor) => new Date(`${valor} Z`))
   .pipe(
