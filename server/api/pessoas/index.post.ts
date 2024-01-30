@@ -16,7 +16,7 @@ export default defineEventHandler(async (event) => {
     return { pessoa: obterViewModelPessoa(novaPessoa) };
   } catch (erro) {
     throw criarErroApi(
-      "api:pessoas:post",
+      event,
       "Erro ao tentar cadastrar Pessoa",
       erro,
     );

@@ -18,7 +18,7 @@ export default defineEventHandler(async (event) => {
     };
   } catch (erro) {
     throw criarErroApi(
-      "api:pessoas:get",
+      event,
       "Erro ao tentar obter listagem de Pessoas",
       erro,
     );

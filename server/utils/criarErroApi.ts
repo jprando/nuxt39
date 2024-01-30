@@ -1,23 +1,25 @@
-import { H3Error } from "h3";
+import { EventHandlerRequest, H3Error, H3Event } from "h3";
 
 export function criarErroApi(
-  contexto: string,
+  event: H3Event<EventHandlerRequest>,
   mensagem?: string,
   e?: unknown,
-  statusCode = 500,
+  statusCode?: number,
 ) {
   const erro = e instanceof Error ? e : undefined;
   const h3Erro = e instanceof H3Error ? e : undefined;
   console.error({
-    nome: h3Erro?.name || erro?.name,
-    contexto: `erro:${contexto}`,
-    statusCode: statusCode || h3Erro?.statusCode,
-    mensagem: mensagem || h3Erro?.message || erro?.message,
+    erro: h3Erro?.name || erro?.name,
+    contexto: `${event.method} ${event.path}`,
+    statusCode: statusCode || h3Erro?.statusCode || 500,
+    statusMessage: h3Erro?.statusMessage,
+    mensagem,
     original: h3Erro?.message || erro?.message,
+    dados: h3Erro?.data,
   });
   return createError({
-    statusCode: statusCode || h3Erro?.statusCode,
-    statusMessage: `erro:${contexto}`,
+    statusCode: statusCode || h3Erro?.statusCode || 500,
+    statusMessage: h3Erro?.statusMessage,
     message: mensagem || h3Erro?.message || erro?.message,
     data: h3Erro?.data,
   });

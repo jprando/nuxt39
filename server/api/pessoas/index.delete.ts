@@ -21,7 +21,7 @@ export default defineEventHandler(async (event) => {
     setResponseStatus(event, 204);
   } catch (erro) {
     throw criarErroApi(
-      "api:pessoas:delete",
+      event,
       "Erro ao tentar excluir Pessoa",
       erro,
     );
