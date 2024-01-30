@@ -13,13 +13,18 @@ export function obterViewModel<T extends ZodRawShape>(
 ) {
   const viewModel = validarViewModel.safeParse(dados);
 
-  const validacaoDescricao = (
-    validarViewModel._def as { schema?: { description?: string } }
-  ).schema?.description;
+  const validacaoDescricao =
+    "schema" in validarViewModel._def &&
+    "description" in validarViewModel._def.schema &&
+    validarViewModel._def.schema?.description;
 
   if (!viewModel.success) {
+    const erro =
+      typeof erroViewModel !== "string" && "name" in erroViewModel
+        ? erroViewModel.name
+        : true;
     console.error({
-      erro: true,
+      erro,
       validacao: validacaoDescricao,
       mensagem: viewModel.error.errors.map((e) => e.message),
       dados,
